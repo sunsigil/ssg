@@ -88,11 +88,16 @@ if __name__ == "__main__":
 		"src_path" : None,
 		"dst_path" : None,
 		"style_path" : None,
-		"base_url" : None
+		"base_url" : None,
+		"ignore_globs" : [
+			".*",
+			"__*"
+		]
 	};
 
 	env["src_path"] = Path(args[0]).absolute();
 	env["dst_path"] = Path(args[1]).absolute();
+
 	if len(args) > 2:
 		style_path = Path(args[2]).absolute();
 		if style_path.is_relative_to(env["src_path"]):
@@ -100,9 +105,17 @@ if __name__ == "__main__":
 			env["style_path"] = style_path;
 		else:
 			print("ERROR: Stylesheet path must be relative to source path");
+	
 	if len(args) > 3:
 		env["base_url"] = args[3];
-	
+
+	ignore_path =  env["src_path"]/".ssgignore";
+	if ignore_path.exists():
+		ignore_file = open(ignore_path, "r")
+		ignore_lines = ignore_file.readlines();
+		for line in ignore_lines:
+			env["ignore_globs"].append(line.strip());
+
 	_prepare_pythonpath(env);
 	_run_loaders(env);
 	_load_libs();

@@ -1,4 +1,5 @@
 import re;
+import glob;
 
 class Resource:
 	def __init__(self, env, path):
@@ -59,11 +60,10 @@ class NodePage:
 		return False;
 
 def _construct_tree(env, path):
-	path_name = str(path.absolute().name);
-	if path_name.startswith("__") and path_name.endswith("__"):
-		return None;
-	if path_name.startswith("."):
-		return None;
+	for glob_str in env["ignore_globs"]:
+		matches = glob.glob(glob_str, root_dir=env["src_path"], recursive=True);
+		if path.name in matches:
+			return None;
 
 	if path.is_dir():
 		node = NodePage(env, path);
