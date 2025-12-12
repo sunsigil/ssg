@@ -28,10 +28,18 @@ class Builder:
 	def banner(self, image, height):
 		self.html.image(image, style=f"display: block; margin: auto; height: {height*100}vh;");
 
-	def gallery(self, images):
-		self.html.open_tag("div", _class="image_row");
+	def gallery(self, images, height=0, borderless=False):
+		self.html.open_tag("div", _class="gallery_row");
 		for image in images:
-			self.html.open_tag("div", _class="image_column");
-			self.html.one_tag("img", src=image, style="height: 35vh");
+			self.html.open_tag("div", _class="gallery_column");
+			style = "";
+			if height > 0:
+				style += f"height:{height*100}vh;";
+			if borderless:
+				style += "border:none;";
+			self.html.one_tag(
+				"img", src=image, _class="gallery_image",
+				style=style
+			);
 			self.html.close_tag();
 		self.html.close_tag();

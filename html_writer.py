@@ -77,17 +77,17 @@ class HTMLWriter:
 		self.one_token("br");
 	
 	def start_text_block(self,):
-		self.open_tag("div", data_text_block=True);
+		self.open_tag("p", data_text_block=True);
 
 	def text(self, s, mode=HTMLMode.DEFAULT, **kwargs):
-		s = s.replace("\\n", "<br>");
+		s = s.replace("\n", "<br>");
 		match mode:
 			case HTMLMode.DEFAULT:
 				head = self.stack[-1] if len(self.stack) > 0 else None;
 				if head != None and "data_text_block" in head[1]:
 					self.plain(f"{self._make_tabs()}{s}");
 				else:
-					self.one_line("p", s);
+					self.plain(f"{self._make_tabs()}<p>{s}</p>");
 			case HTMLMode.INLINE:
 				return f"<p {self._make_args(kwargs)}>{s}</p>";
 	
@@ -133,8 +133,8 @@ class HTMLWriter:
 			case HTMLMode.INLINE:
 				return f"<img src={path} {self._make_args(kwargs)}>";
 
-	def start_div(self):
-		self.open_tag("div");
+	def start_div(self, **kwargs):
+		self.open_tag("div", **kwargs);
 
 	def end_div(self):
 		self.close_tag();

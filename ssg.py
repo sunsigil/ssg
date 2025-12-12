@@ -9,6 +9,7 @@ import sys;
 from html_writer import *;
 import shutil;
 from builder import Builder;
+import postprocessor;
 
 def _prepare_pythonpath(env):
 	path = os.environ.get("PYTHONPATH", str(env["src_path"])).split(os.pathsep);
@@ -72,6 +73,14 @@ def _reify_tree(env, tree):
 		html.start(tree.title);
 		module.build(env, tree, html);
 		html.end();
+		
+		output = open(tree.out_path, "r");
+		text = output.read();
+		output.close();
+		text = postprocessor.process(text);
+		output = open(tree.out_path, "w");
+		output.write(text);
+		output.close();
 
 	elif isinstance(tree, pages.Resource):
 		#print(f"Generating resource {tree.out_path}");
