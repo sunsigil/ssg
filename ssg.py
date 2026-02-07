@@ -48,7 +48,7 @@ def _reify_tree(env, tree):
 
 			os.makedirs(tree.out_path, exist_ok=True);
 		
-		if not tree.is_indexed():
+		if not tree.is_indexed() and tree.is_navigable():
 			print(f"Generating index for directory {tree.out_path}");
 			
 			html = HTMLWriter(tree.out_path/"index.html", style=env["style_path"], base=env["base_url"]);

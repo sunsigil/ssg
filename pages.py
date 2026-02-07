@@ -12,6 +12,20 @@ class Resource:
 		self.title = path.name;
 
 class LeafPage:
+	def parse_expr(page_expr):
+		tokens = re.split(r"\(|\)|,", page_expr);
+		tokens = [t.strip() for t in tokens if len(t) > 0];
+
+		args = {};
+		args["title"] = tokens[1];
+
+		for token in tokens:
+			pair_match = re.match(r"(.*)\s*=\s*(.*)", token);
+			if pair_match != None:
+				args[pair_match.group(1)] = pair_match.group(2);
+		
+		return args;
+
 	def __init__(self, env, path):
 		self.parent = None;
 
@@ -20,12 +34,11 @@ class LeafPage:
 		self.out_path = env["dst_path"]/self.rel_path;
 
 		text = path.read_text();
-		page_line = re.search(r"#\s*PAGE\s*\(.*\)\n", text).group();
-		page_expr = re.search(r"PAGE\s*\(.*\)", page_line).group();
-		tokens = re.split(r"\s|\(|\)", page_expr);
-		tokens = [t for t in tokens if len(t) > 0];
+		page_expr = re.search(r"#\s*PAGE\s*\((.*)\)", text).group(0);
+		args = LeafPage.parse_expr(page_expr);
 
-		self.title = " ".join(tokens[1:]);
+		self.title = args["title"];
+		self.attributes = args;
 
 class NodePage:
 	def __init__(self, env, path):

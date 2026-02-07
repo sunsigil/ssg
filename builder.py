@@ -1,5 +1,7 @@
 from html_writer import HTMLWriter;
 import pages;
+from PIL import Image;
+from pathlib import Path;
 
 class Builder:
 	def __init__(self, html: HTMLWriter):
@@ -42,4 +44,19 @@ class Builder:
 				style=style
 			);
 			self.html.close_tag();
+		self.html.close_tag();
+
+	def gallery_grid(self, thumbnails, originals=[]):
+		self.html.open_tag("ul", _class="gallery_grid");
+		for (idx, image) in enumerate(thumbnails):
+			self.html.open_tag("li");
+			self.html.open_tag("a", href=originals[idx] if len(originals) == len(thumbnails) else image);
+			self.html.one_tag("img", src=image);
+			self.html.close_tag();
+			self.html.close_tag();
+		self.html.close_tag();
+
+	def title_bar(self, title, link):
+		self.html.open_tag("header", _class="title_bar");
+		self.html.link(title, link);
 		self.html.close_tag();

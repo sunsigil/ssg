@@ -71,7 +71,7 @@ class HTMLWriter:
 		self.file.close();
 	
 	def heading(self, tier, s, **kwargs):
-		self.one_line(f"h{tier}", s, id=s.lower(), **kwargs);
+		self.one_line(f"h{tier}", s, **kwargs);
 
 	def newline(self):
 		self.one_token("br");
